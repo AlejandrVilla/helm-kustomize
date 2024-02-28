@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-v1-prod
+  name: hello-v1
 spec:
   template:
     spec:
