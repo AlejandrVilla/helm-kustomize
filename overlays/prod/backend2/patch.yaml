@@ -9,4 +9,4 @@ spec:
       - name: hello-v2
         env:
         - name: ENVIRONMENT
-          value: "dev"
+          value: "prod"
