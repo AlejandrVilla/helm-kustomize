@@ -39,6 +39,28 @@ jobs:
       #  kubectl apply -f k8s/deployment.yaml
        # kubectl apply -f k8s/service.yaml
 
+    # - name: Dev environment
+    #   run: |
+    #     helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment.yaml |
+    #     helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment.yaml 
+
+    # - name: Prod environment
+    #   run: |
+    #     helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment.yaml |
+    #     helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment.yaml 
+
+    - name: run kustomize dev
+      run: |
+        kubectl -k ./overlays/dev/backend1 | kubectl apply -f - |
+        kubectl -k ./overlays/dev/backend2 | kubectl apply -f - |
+        kubectl apply -f ./overlays/dev/ingres.nginx.yaml -n dev
+
+    - name: run kustomize prod
+      run: |
+        kubectl -k ./overlays/prod/backend1 | kubectl apply -f - |
+        kubectl -k ./overlays/prod/backend2 | kubectl apply -f - |
+        kubectl apply -f ./overlays/prod/ingres.nginx.yaml -n prod
+
     # get pods
     - name: Validate Deployment
       run: kubectl get pods
