@@ -1,0 +1,44 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches:
+      - main
+
+# jobs in workflow
+jobs:
+  build-app:
+    # environment
+    runs-on: self-hosted
+
+    # steps
+    steps:
+    - name: Checkout of source code
+      uses: actions/checkout@v2
+    
+    - name: Azure login
+    #   run: az login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az account show
+
+    # aks kubeconfig
+    - name: Set up kubectl
+      run: cp k8s/config ~/.kube/config
+
+    # deplot to aks
+    #- name: Deploy to AKS
+     # run: |
+      #  kubectl apply -f k8s/deployment.yaml
+       # kubectl apply -f k8s/service.yaml
+
+    # get pods
+    - name: Validate Deployment
+      run: kubectl get pods
