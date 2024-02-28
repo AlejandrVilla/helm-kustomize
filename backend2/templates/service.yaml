@@ -1,15 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "backend2.fullname" . }}
-  labels:
-    {{- include "backend2.labels" . | nindent 4 }}
+  name: {{ .Values.metadata.name }}
 spec:
-  type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
   selector:
-    {{- include "backend2.selectorLabels" . | nindent 4 }}
+    role: {{ .Values.matchLabels.role }}
