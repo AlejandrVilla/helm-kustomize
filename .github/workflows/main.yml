@@ -51,14 +51,14 @@ jobs:
 
     - name: run kustomize dev
       run: |
-        kubectl -k ./overlays/dev/backend1 | kubectl apply -f - |
-        kubectl -k ./overlays/dev/backend2 | kubectl apply -f - |
+        kubectl apply -k ./overlays/dev/backend1 | kubectl apply -f - |
+        kubectl apply -k ./overlays/dev/backend2 | kubectl apply -f - |
         kubectl apply -f ./overlays/dev/ingres.nginx.yaml -n dev
 
     - name: run kustomize prod
       run: |
-        kubectl -k ./overlays/prod/backend1 | kubectl apply -f - |
-        kubectl -k ./overlays/prod/backend2 | kubectl apply -f - |
+        kubectl apply -k ./overlays/prod/backend1 | kubectl apply -f - |
+        kubectl apply -k ./overlays/prod/backend2 | kubectl apply -f - |
         kubectl apply -f ./overlays/prod/ingres.nginx.yaml -n prod
 
     # get pods
