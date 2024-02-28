@@ -1,0 +1,17 @@
+replicaCount: 3
+
+metadata:
+  name: hello-v1
+
+matchLabels:
+  role: hello-v1
+
+image:
+  name: hello-v1
+  repository: gcr.io/google-samples/hello-app
+  tag: "1.0"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
