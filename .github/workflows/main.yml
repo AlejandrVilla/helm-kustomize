@@ -33,21 +33,15 @@ jobs:
     - name: Set up kubectl
       run: cp k8s/config ~/.kube/config
 
-    # deplot to aks
-    #- name: Deploy to AKS
-     # run: |
-      #  kubectl apply -f k8s/deployment.yaml
-       # kubectl apply -f k8s/service.yaml
+    - name: Generate dev manifests
+      run: |
+        helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment2.yaml |
+        helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment2.yaml 
 
-    # - name: Dev environment
-    #   run: |
-    #     helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment.yaml |
-    #     helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment.yaml 
-
-    # - name: Prod environment
-    #   run: |
-    #     helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment.yaml |
-    #     helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment.yaml 
+    - name: Generate prod manifests
+      run: |
+        helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment2.yaml |
+        helm template backend2 ./charts/backend2 > ./overlays/prod/backend2/deployment2.yaml 
 
     - name: run kustomize dev
       run: |
@@ -64,3 +58,10 @@ jobs:
     # get pods
     - name: Validate Deployment
       run: kubectl get pods
+
+    - name: Clean deployments
+      run: |
+        rm ./overlays/dev/backend1/deployment2.yaml |
+        rm ./overlays/dev/backend2/deployment2.yaml |
+        rm ./overlays/prod/backend1/deployment2.yaml |
+        rm ./overlays/prod/backend2/deployment2.yaml
