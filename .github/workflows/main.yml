@@ -29,38 +29,72 @@ jobs:
         inlineScript: |
           az account show
 
-    # aks kubeconfig
     - name: Set up kubectl
       run: cp k8s/config ~/.kube/config
 
+  generate-dev-manifests:
+    runs-on: self-hosted
+    needs: build-app
+
+    steps:
     - name: Generate dev manifests
       run: |
         helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment2.yaml &&
-        helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment2.yaml 
+        helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment2.yaml
 
+  generate-prod-manifests:
+    runs-on: self-hosted
+    needs: build-app
+
+    steps:
     - name: Generate prod manifests
       run: |
         helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment2.yaml &&
-        helm template backend2 ./charts/backend2 > ./overlays/prod/backend2/deployment2.yaml 
+        helm template backend2 ./charts/backend2 > ./overlays/prod/backend2/deployment2.yaml
 
-    - name: run kustomize dev
+  deploy-dev:
+    runs-on: self-hosted
+    needs: [generate-dev-manifests]
+
+    steps:
+    - name: Run kustomize dev
       run: |
         kubectl kustomize ./overlays/dev/backend1 | kubectl apply -f - &&
         kubectl kustomize ./overlays/dev/backend2 | kubectl apply -f - &&
         kubectl apply -f ./overlays/dev/ingress.nginx.yaml -n dev
 
-    - name: run kustomize prod
+  deploy-prod:
+    runs-on: self-hosted
+    needs: [generate-prod-manifests]
+
+    steps:
+    - name: Run kustomize prod
       run: |
         kubectl kustomize ./overlays/prod/backend1 | kubectl apply -f - &&
         kubectl kustomize ./overlays/prod/backend2 | kubectl apply -f - &&
         kubectl apply -f ./overlays/prod/ingress.nginx.yaml -n prod
 
+  validate-dev-deployment:
+    runs-on: self-hosted
+    needs: [deploy-dev]
+
+    steps:
     - name: Validate dev Deployment
       run: kubectl get all -n dev
-    
+
+  validate-prod-deployment:
+    runs-on: self-hosted
+    needs: [deploy-prod]
+
+    steps:
     - name: Validate prod Deployment
       run: kubectl get all -n prod
 
+  clean-deployments:
+    runs-on: self-hosted
+    needs: [validate-dev-deployment, validate-prod-deployment]
+
+    steps:
     - name: Clean deployments
       run: |
         rm ./overlays/dev/backend1/deployment2.yaml &&
