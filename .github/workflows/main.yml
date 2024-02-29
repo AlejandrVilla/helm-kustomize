@@ -45,14 +45,14 @@ jobs:
 
     - name: run kustomize dev
       run: |
-        kubectl apply -k ./overlays/dev/backend1 | kubectl apply -f - &&
-        kubectl apply -k ./overlays/dev/backend2 | kubectl apply -f - &&
+        kubectl kustomize ./overlays/dev/backend1 | kubectl apply -f - &&
+        kubectl kustomize ./overlays/dev/backend2 | kubectl apply -f - &&
         kubectl apply -f ./overlays/dev/ingress.nginx.yaml -n dev
 
     - name: run kustomize prod
       run: |
-        kubectl apply -k ./overlays/prod/backend1 | kubectl apply -f - &&
-        kubectl apply -k ./overlays/prod/backend2 | kubectl apply -f - &&
+        kubectl kustomize ./overlays/prod/backend1 | kubectl apply -f - &&
+        kubectl kustomize ./overlays/prod/backend2 | kubectl apply -f - &&
         kubectl apply -f ./overlays/prod/ingress.nginx.yaml -n prod
 
     - name: Validate dev Deployment
