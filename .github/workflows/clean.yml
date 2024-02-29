@@ -1,0 +1,41 @@
+name: Delete Resources
+
+on:
+  workflow_run:
+    workflows: ["Build and Deploy to AKS"]
+    types:
+      - completed
+
+jobs:
+  delete-resources:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Delete dev resources
+      run: |
+        kubectl delete svc --all -n dev &&
+        kubectl delete deployment --all -n dev &&
+        kubectl delete ing --all -n dev
+
+    - name: Delete prod resources
+      run: |
+        kubectl delete svc --all -n prod &&
+        kubectl delete deployment --all -n prod &&
+        kubectl delete ing --all -n prod
+  
+  validate:
+    runs-on: self-hosted
+    needs: delete-resources
+
+    steps:
+      - name: check dev environment
+        run: |
+          kubectl get all -n dev 
+          kubectl get ing -n dev
+      - name: check prod environment
+        run: |
+          kubectl get all -n prod 
+          kubectl get ing -n prod
