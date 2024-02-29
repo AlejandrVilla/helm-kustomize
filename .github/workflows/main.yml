@@ -55,9 +55,11 @@ jobs:
         kubectl apply -k ./overlays/prod/backend2 | kubectl apply -f - |
         kubectl apply -f ./overlays/prod/ingress.nginx.yaml -n prod
 
-    # get pods
-    - name: Validate Deployment
-      run: kubectl get pods
+    - name: Validate dev Deployment
+      run: kubectl get all -n dev
+    
+    - name: Validate prod Deployment
+      run: kubectl get all -n prod
 
     - name: Clean deployments
       run: |

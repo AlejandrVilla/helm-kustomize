@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: prod  
 
 resources:
-  - deployment.yaml
+  - deployment2.yaml
 
 patches:
   - path: patch.yaml
