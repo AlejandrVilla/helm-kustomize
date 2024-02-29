@@ -34,25 +34,25 @@ jobs:
       run: cp k8s/config ~/.kube/config
 
     - name: Generate dev manifests
-      run: |
-        helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment2.yaml |
+      run: \
+        helm template backend1 ./charts/backend1 > ./overlays/dev/backend1/deployment2.yaml \
         helm template backend2 ./charts/backend2 > ./overlays/dev/backend2/deployment2.yaml 
 
     - name: Generate prod manifests
       run: |
-        helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment2.yaml |
+        helm template backend1 ./charts/backend1 > ./overlays/prod/backend1/deployment2.yaml \
         helm template backend2 ./charts/backend2 > ./overlays/prod/backend2/deployment2.yaml 
 
     - name: run kustomize dev
-      run: |
-        kubectl apply -k ./overlays/dev/backend1 | kubectl apply -f - |
-        kubectl apply -k ./overlays/dev/backend2 | kubectl apply -f - |
+      run: \
+        kubectl apply -k ./overlays/dev/backend1 | kubectl apply -f - \
+        kubectl apply -k ./overlays/dev/backend2 | kubectl apply -f - \
         kubectl apply -f ./overlays/dev/ingress.nginx.yaml -n dev
 
     - name: run kustomize prod
-      run: |
-        kubectl apply -k ./overlays/prod/backend1 | kubectl apply -f - |
-        kubectl apply -k ./overlays/prod/backend2 | kubectl apply -f - |
+      run: \
+        kubectl apply -k ./overlays/prod/backend1 | kubectl apply -f - \
+        kubectl apply -k ./overlays/prod/backend2 | kubectl apply -f - \
         kubectl apply -f ./overlays/prod/ingress.nginx.yaml -n prod
 
     - name: Validate dev Deployment
@@ -62,8 +62,8 @@ jobs:
       run: kubectl get all -n prod
 
     - name: Clean deployments
-      run: |
-        rm ./overlays/dev/backend1/deployment2.yaml |
-        rm ./overlays/dev/backend2/deployment2.yaml |
-        rm ./overlays/prod/backend1/deployment2.yaml |
+      run: \
+        rm ./overlays/dev/backend1/deployment2.yaml \
+        rm ./overlays/dev/backend2/deployment2.yaml \
+        rm ./overlays/prod/backend1/deployment2.yaml \
         rm ./overlays/prod/backend2/deployment2.yaml
