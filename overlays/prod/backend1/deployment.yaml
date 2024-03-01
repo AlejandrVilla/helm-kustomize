@@ -38,24 +38,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
----
-# Source: backend1/templates/tests/test-connection.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: "backend1-test-connection"
-  labels:
-    helm.sh/chart: backend1-0.1.0
-    app.kubernetes.io/name: backend1
-    app.kubernetes.io/instance: backend1
-    app.kubernetes.io/version: "1.16.0"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test
-spec:
-  containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args: ['backend1:8080']
-  restartPolicy: Never
